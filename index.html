@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>狗狗指令能力評估表｜Sharkbedi Pet Salon</title>
+<style>
+  :root{
+    --paper:#fffdf7;
+    --paper-2:#fff9ed;
+    --ink:#5e4634;
+    --muted:#92725a;
+    --line:#c98e52;
+    --green:#7d8f50;
+    --green-bg:#f1f4e5;
+    --orange:#be7b33;
+    --orange-bg:#fff4e5;
+    --peach:#f7d9c6;
+    --card:#fffdf8;
+    --shadow:0 7px 18px rgba(116, 79, 43, .08);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#eee8dc;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",Arial,sans-serif}
+  button,input,textarea{font:inherit}
+  body{padding:28px 16px}
+
+  .sheet{
+    width:min(100%, 210mm);
+    min-height:297mm;
+    margin:0 auto;
+    padding:11mm 10mm 9mm;
+    background:
+      radial-gradient(circle at 4% 3%, rgba(230,184,106,.20) 0 2px, transparent 3px),
+      radial-gradient(circle at 95% 6%, rgba(230,184,106,.20) 0 2px, transparent 3px),
+      linear-gradient(var(--paper),var(--paper));
+    box-shadow:0 14px 48px rgba(63,46,29,.18);
+    border-radius:14px;
+    overflow:hidden;
+    position:relative;
+  }
+
+  .paw{position:absolute;color:#c99054;opacity:.85;font-size:22px;transform:rotate(-12deg)}
+  .paw.one{top:20px;left:22px}.paw.two{top:18px;right:34px}.paw.three{bottom:54px;left:24px}.paw.four{bottom:42px;right:42px}
+  .spark{position:absolute;color:#e7a04d;font-size:17px}
+  .spark.one{top:35px;right:175px}.spark.two{top:250px;left:44px}.spark.three{bottom:160px;right:62px}
+
+  .hero{display:grid;grid-template-columns:120px 1fr 120px;align-items:center;gap:12px;margin-bottom:14px}
+  .character{height:112px;display:flex;align-items:flex-end;justify-content:center;font-size:72px;filter:drop-shadow(0 6px 4px rgba(87,59,33,.12))}
+  .character.left{transform:rotate(-4deg)} .character.right{transform:rotate(4deg)}
+  .title-wrap{text-align:center}
+  h1{margin:0;color:#674833;font-size:35px;letter-spacing:3px;font-weight:900;line-height:1.25}
+  .ribbon{display:inline-block;margin-top:12px;padding:8px 25px;color:#fffdf6;background:var(--green);border-radius:7px;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-size:17px;font-weight:800;letter-spacing:2px}
+
+  .meta{
+    display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:12px;
+    padding:12px 16px;border:2px solid #cc955d;border-radius:16px;background:rgba(255,253,247,.78);
+    margin:6px 0 14px;
+  }
+  .field{display:flex;align-items:center;gap:8px;min-width:0}
+  .field label{font-weight:800;white-space:nowrap}
+  .field input{min-width:0;width:100%;border:0;border-bottom:2px solid #bda28c;outline:0;background:transparent;padding:7px 3px;color:var(--ink)}
+  .date-control{display:flex;gap:6px;width:100%;align-items:center}
+  .date-control input{flex:1}
+  .today-btn{border:1px solid #cfa26f;background:#fff6e6;color:#7f5939;border-radius:8px;padding:5px 8px;cursor:pointer;font-size:12px;white-space:nowrap}
+  .today-btn:hover{background:#f6e2c4}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .section{
+    border:2px solid var(--border,#b8c88c);border-radius:15px;background:linear-gradient(180deg,var(--tint,#f2f5e8) 0 52px,var(--card) 52px);
+    box-shadow:var(--shadow);overflow:hidden;min-height:228px;position:relative;
+  }
+  .section.orange{--border:#d99c5e;--tint:#fff1df}
+  .section.green{--border:#a6b774;--tint:#eef3e1}
+  .section-title{height:52px;display:flex;align-items:center;padding:0 15px;color:var(--heading,#74884a);font-size:19px;font-weight:900;letter-spacing:.5px}
+  .orange .section-title{color:#ad6d28}
+  .section-body{padding:14px 15px 13px}
+  .small-dog{position:absolute;right:20px;bottom:17px;font-size:66px;opacity:.95;filter:drop-shadow(0 4px 3px rgba(80,55,32,.12))}
+  .small-dog.top{top:76px;bottom:auto}
+  .check-list{display:grid;gap:9px;padding-right:80px}
+  .check-row{display:flex;align-items:center;gap:10px;font-size:15px;line-height:1.35;cursor:pointer}
+  .check-row input{appearance:none;width:19px;height:19px;border:2px solid #8a6b51;border-radius:3px;background:#fff;display:grid;place-content:center;cursor:pointer;flex:0 0 auto}
+  .check-row input:checked{border-color:var(--green);background:var(--green)}
+  .check-row input:checked::before{content:"✓";font-size:15px;font-weight:900;color:white;line-height:1}
+  .dash{border-top:2px dashed #c8aa8b;margin:14px 0 10px}
+  .result-line{font-weight:900;color:#718346;margin-bottom:8px}
+  .result-options{display:flex;gap:14px;flex-wrap:wrap}
+  .result-options label{font-size:14px;display:flex;gap:7px;align-items:center;cursor:pointer}
+
+  .score-list{display:grid;gap:13px;padding-right:95px}
+  .score-row{display:grid;grid-template-columns:108px 1fr;align-items:center;gap:8px;border-bottom:1px solid #e5d4c0;padding-bottom:8px}
+  .score-row:last-child{border-bottom:0}
+  .score-label{font-weight:800}
+  .stars{display:flex;gap:4px;align-items:center}
+  .star{
+    border:0;background:transparent;padding:0;cursor:pointer;font-size:23px;line-height:1;color:#8e8276;
+    transition:transform .14s ease,color .14s ease;
+  }
+  .star:hover{transform:translateY(-1px) scale(1.08)}
+  .star.active{color:#d89c31;text-shadow:0 1px 0 #966923}
+
+  .gen-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;padding-right:92px}
+  .env-row,.proof-row,.distance-row{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:7px}
+  .env-row span,.proof-row span,.distance-row span{font-weight:800}
+  .mini-stars .star{font-size:20px}
+
+  .level-box{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;padding-right:105px}
+  .level-tag{border-radius:7px;padding:5px 10px;color:#51402f;font-weight:900;font-size:14px;line-height:1;background:#d9e3af}
+  .level-tag.l2{background:#e4e7bd}.level-tag.l3{background:#f7e7bb}.level-tag.l4{background:#f4dbc7}.level-tag.l5{background:#edcfc3}
+  .level-text{align-self:center;font-weight:800}
+  .notes{
+    margin-top:12px;border:2px solid #d69c60;border-radius:15px;background:linear-gradient(180deg,#fff5e9 0 50px,#fffdf8 50px);
+    overflow:hidden;box-shadow:var(--shadow)
+  }
+  .notes-title{height:50px;display:flex;align-items:center;gap:10px;padding:0 16px;color:#a96b28;font-size:18px;font-weight:900}
+  .note-rows{padding:12px 15px 14px;display:grid;gap:10px}
+  .note-row{display:grid;grid-template-columns:30px 165px 1fr;gap:8px;align-items:center}
+  .note-icon{font-size:22px;text-align:center}.note-label{font-weight:900}
+  textarea{
+    width:100%;height:34px;resize:vertical;min-height:34px;max-height:120px;border:0;border-bottom:2px dashed #c4a98e;outline:0;background:transparent;padding:5px 3px;color:var(--ink);line-height:1.4;
+  }
+  textarea:focus{border-bottom-color:#8f754f;background:#fffaf1}
+  .footer{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-top:14px}
+  .quote{display:flex;align-items:center;gap:12px;color:#748a51;font-size:15px;font-weight:800;line-height:1.55}
+  .brand{text-align:right;color:#6c4c35;font-size:17px;font-weight:900;letter-spacing:1px}
+  .brand small{display:block;font-size:12px;letter-spacing:.6px;margin-top:2px}
+
+  .reset-btn{position:fixed;right:20px;bottom:18px;border:0;border-radius:999px;background:#74513b;color:#fff;padding:11px 16px;font-weight:800;box-shadow:0 8px 20px rgba(80,55,32,.24);cursor:pointer}
+  .reset-btn:hover{background:#5e3f2c}
+  .tip{font-size:12px;color:#8e7259;font-weight:700;margin-top:2px}
+
+  @media (max-width:720px){
+    body{padding:0;background:var(--paper)}
+    .sheet{border-radius:0;box-shadow:none;padding:20px 14px;min-height:100vh}
+    .hero{grid-template-columns:66px 1fr 66px}.character{font-size:45px;height:82px}
+    h1{font-size:26px;letter-spacing:1px}.ribbon{font-size:13px;padding:7px 16px}
+    .meta,.grid{grid-template-columns:1fr}.meta{gap:8px}
+    .section{min-height:auto}.check-list,.score-list,.gen-grid,.level-box{padding-right:65px}
+    .note-row{grid-template-columns:27px 120px 1fr}
+    .footer{align-items:center}.brand{font-size:13px}.quote{font-size:12px}
+  }
+
+  @media print{
+    @page{size:A4 portrait;margin:0}
+    html,body{background:#fff;padding:0}
+    .sheet{width:210mm;min-height:297mm;box-shadow:none;border-radius:0;margin:0;padding:11mm 10mm 9mm}
+    .reset-btn{display:none}
+    input,textarea{color:#4a3528 !important}
+  }
+
+
+  /* A4 layout tune-up: keeps every section within a single printable page. */
+  :root{
+    --paper:#fffdf8;
+    --ink:#5c4634;
+    --green:#849554;
+    --orange:#bd7b32;
+  }
+  body{padding:24px 14px;background:#ede7dc}
+  .sheet{
+    width:210mm;
+    height:297mm;
+    min-height:297mm;
+    padding:8mm 8mm 7mm;
+    border-radius:12px;
+    background:
+      radial-gradient(circle at 3% 4%, rgba(230,184,106,.25) 0 1.4px, transparent 1.8px),
+      radial-gradient(circle at 96% 5%, rgba(230,184,106,.25) 0 1.4px, transparent 1.8px),
+      linear-gradient(var(--paper),var(--paper));
+  }
+  .paw{font-size:17px;opacity:.62}
+  .paw.one{top:13px;left:16px}.paw.two{top:13px;right:23px}.paw.three{bottom:27px;left:17px}.paw.four{bottom:26px;right:25px}
+  .spark{font-size:14px}.spark.one{top:25px;right:140px}.spark.two{top:210px;left:34px}.spark.three{bottom:112px;right:44px}
+
+  .hero{grid-template-columns:90px 1fr 90px;gap:8px;height:27mm;margin:0 0 3mm}
+  .character{height:27mm;font-size:58px}
+  h1{font-size:29px;letter-spacing:2px;line-height:1.12}
+  .ribbon{margin-top:7px;padding:6px 20px;font-size:14px;letter-spacing:1.5px;border-radius:6px}
+
+  .meta{height:14mm;margin:0 0 3mm;padding:7px 12px;gap:10px;border-radius:12px}
+  .field{gap:5px}.field label{font-size:14px}.field input{padding:3px 2px;font-size:13px}
+  .date-control{gap:4px}.today-btn{padding:3px 6px;font-size:11px;border-radius:6px}
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+    grid-template-areas:
+      "stimulus criteria"
+      "generalization proofing"
+      "distance level";
+    grid-template-rows:58mm 73mm 48mm;
+    gap:3mm;
+  }
+  .section{min-height:0;border-radius:12px;background:linear-gradient(180deg,var(--tint,#f2f5e8) 0 40px,var(--card) 40px)}
+  .section-stimulus{grid-area:stimulus}.section-criteria{grid-area:criteria}.section-generalization{grid-area:generalization}.section-proofing{grid-area:proofing}.section-distance{grid-area:distance}.section-level{grid-area:level}
+  .section-title{height:40px;padding:0 11px;font-size:16px;letter-spacing:0}
+  .section-body{padding:10px 12px 9px}
+  .small-dog{right:14px;bottom:10px;font-size:46px}.small-dog.top{top:63px}
+  .check-list{gap:6px;padding-right:62px}.check-row{gap:7px;font-size:12.6px;line-height:1.22}.check-row input{width:16px;height:16px}
+  .dash{margin:8px 0 6px}.result-line{margin-bottom:5px;font-size:13px}.result-options{gap:8px 13px}.result-options label{font-size:11.5px;gap:5px}
+
+  .score-list{gap:8px;padding-right:76px}.score-row{grid-template-columns:88px 1fr;gap:6px;padding-bottom:5px}.score-label{font-size:13px}
+  .stars{gap:2px}.star{font-size:19px}.mini-stars .star{font-size:16px}
+
+  .gen-grid{gap:4px 11px;padding-right:68px}.env-row,.proof-row,.distance-row{grid-template-columns:80px 1fr;gap:4px}.env-row span,.proof-row span,.distance-row span{font-size:12.4px;line-height:1.1}
+  .section-generalization .section-body{padding-top:9px}.section-proofing .section-body{padding-top:9px}.section-proofing .gen-grid{gap:4px 0;padding-right:67px;grid-template-columns:1fr}.section-proofing .proof-row{grid-template-columns:89px 1fr}
+  .section-generalization .result-options{gap:5px 9px}.section-generalization .result-options label{font-size:10.5px}
+
+  .section-distance .score-list{gap:5px;padding-right:70px}.section-distance .section-body{padding-top:10px}.section-distance .distance-row{grid-template-columns:78px 1fr}
+  .level-box{gap:5px 9px;padding-right:83px}.level-tag{padding:3px 8px;font-size:11.5px;border-radius:5px}.level-text{font-size:12px}.tip{font-size:10px;margin-top:5px}.section-level .result-options{margin-top:6px !important;gap:4px 8px}.section-level .result-options label{font-size:10.5px}
+
+  .notes{height:36mm;margin-top:3mm;border-radius:12px;background:linear-gradient(180deg,#fff5e9 0 35px,#fffdf8 35px)}
+  .notes-title{height:35px;gap:7px;padding:0 12px;font-size:15px}.note-rows{padding:8px 11px 8px;gap:5px}.note-row{grid-template-columns:23px 147px 1fr;gap:5px}.note-icon{font-size:17px}.note-label{font-size:11.5px}.note-row textarea{height:22px;min-height:22px;max-height:60px;padding:2px 3px;font-size:11px}
+  .footer{height:13mm;margin-top:2mm;gap:10px;align-items:center}.quote{gap:7px;font-size:11.5px;line-height:1.3}.quote span:first-child{font-size:21px !important}.brand{font-size:13px;letter-spacing:.6px}.brand small{font-size:9px;margin-top:1px}
+
+  .action-bar{position:fixed;right:20px;bottom:18px;display:flex;gap:8px;z-index:10}
+  .reset-btn,.pdf-btn{position:static;border:0;border-radius:999px;padding:11px 15px;font-weight:800;box-shadow:0 8px 20px rgba(80,55,32,.24);cursor:pointer}
+  .reset-btn{background:#74513b;color:#fff}.reset-btn:hover{background:#5e3f2c}
+  .pdf-btn{background:#6f8850;color:#fff}.pdf-btn:hover{background:#59713f}.pdf-btn::before{content:"▣";margin-right:7px;font-size:13px}
+
+  @media (max-width:720px){
+    body{padding:0}.sheet{width:100%;height:auto;min-height:100vh;padding:16px 12px;border-radius:0}.hero{height:auto;grid-template-columns:60px 1fr 60px}.character{height:74px;font-size:43px}h1{font-size:24px}.ribbon{font-size:12px}.meta{height:auto}.grid{grid-template-areas:none;grid-template-rows:none}.section-stimulus,.section-criteria,.section-generalization,.section-proofing,.section-distance,.section-level{grid-area:auto}.notes{height:auto}.footer{height:auto}.action-bar{right:12px;bottom:12px}.reset-btn,.pdf-btn{padding:10px 12px;font-size:13px}
+  }
+  @media print{
+    @page{size:A4 portrait;margin:0}
+    html,body{width:210mm;height:297mm;background:#fff;padding:0}
+    .sheet{width:210mm;height:297mm;min-height:297mm;box-shadow:none;border-radius:0;margin:0;padding:8mm 8mm 7mm}
+    .action-bar{display:none !important}
+    input,textarea{color:#4a3528 !important}
+  }
+
+</style>
+</head>
+<body>
+  <main class="sheet" aria-label="狗狗指令能力評估表">
+    <span class="paw one">🐾</span><span class="paw two">🐾</span><span class="paw three">🐾</span><span class="paw four">🐾</span>
+    <span class="spark one">✦</span><span class="spark two">✦</span><span class="spark three">✦</span>
+
+    <section class="hero">
+      <div class="character left" aria-hidden="true">👩🏻‍🏫</div>
+      <div class="title-wrap">
+        <h1>狗狗指令能力評估表</h1>
+        <div class="ribbon">陪伴成長，從每一次練習開始</div>
+      </div>
+      <div class="character right" aria-hidden="true">🐶</div>
+    </section>
+
+    <section class="meta" aria-label="基本資料">
+      <div class="field"><label for="commandName">指令名稱：</label><input id="commandName" type="text" placeholder="例如：坐下、等待、召回"></div>
+      <div class="field"><label for="assessmentDate">評估日期：</label><div class="date-control"><input id="assessmentDate" type="date"><button class="today-btn" type="button" data-today>今天</button></div></div>
+      <div class="field"><label for="dogName">評估犬隻：</label><input id="dogName" type="text" placeholder="輸入毛孩姓名"></div>
+    </section>
+
+    <section class="grid">
+      <article class="section green section-stimulus">
+        <div class="section-title">🐾【一、刺激控制（Stimulus Control）】</div>
+        <div class="section-body">
+          <div class="check-list">
+            <label class="check-row"><input type="checkbox">聽到指令後 2 秒內執行</label>
+            <label class="check-row"><input type="checkbox">未下指令時不會自行執行</label>
+            <label class="check-row"><input type="checkbox">不會與其他指令混淆</label>
+            <label class="check-row"><input type="checkbox">不會做出其他錯誤動作</label>
+            <label class="check-row"><input type="checkbox">只有口令也能執行</label>
+            <label class="check-row"><input type="checkbox">只有手勢也能執行（如有訓練）</label>
+          </div>
+          <div class="dash"></div>
+          <div class="result-line">評估結果：</div>
+          <div class="result-options">
+            <label><input type="checkbox">尚未理解</label>
+            <label><input type="checkbox">部分理解</label>
+            <label><input type="checkbox">已理解</label>
+            <label><input type="checkbox">完全理解</label>
+          </div>
+        </div>
+        <div class="small-dog">🐕</div>
+      </article>
+
+      <article class="section orange section-criteria">
+        <div class="section-title">🐾【二、行為標準（Criteria）】</div>
+        <div class="section-body">
+          <div class="score-list">
+            <div class="score-row"><span class="score-label">執行速度：</span><div class="stars" data-name="執行速度" aria-label="執行速度評分"></div></div>
+            <div class="score-row"><span class="score-label">動作精準度：</span><div class="stars" data-name="動作精準度" aria-label="動作精準度評分"></div></div>
+            <div class="score-row"><span class="score-label">維持穩定度：</span><div class="stars" data-name="維持穩定度" aria-label="維持穩定度評分"></div></div>
+            <div class="score-row"><span class="score-label">專注力：</span><div class="stars" data-name="專注力" aria-label="專注力評分"></div></div>
+          </div>
+        </div>
+        <div class="small-dog">🧑🏻‍🦱🐩</div>
+      </article>
+
+      <article class="section green section-generalization">
+        <div class="section-title">🐾【三、泛化能力（Generalization）】</div>
+        <div class="section-body">
+          <div class="gen-grid">
+            <div class="env-row"><span>客廳：</span><div class="stars mini-stars" data-name="客廳"></div></div>
+            <div class="env-row"><span>房間：</span><div class="stars mini-stars" data-name="房間"></div></div>
+            <div class="env-row"><span>美容店：</span><div class="stars mini-stars" data-name="美容店"></div></div>
+            <div class="env-row"><span>大樓中庭：</span><div class="stars mini-stars" data-name="大樓中庭"></div></div>
+            <div class="env-row"><span>社區散步：</span><div class="stars mini-stars" data-name="社區散步"></div></div>
+            <div class="env-row"><span>公園：</span><div class="stars mini-stars" data-name="公園"></div></div>
+            <div class="env-row"><span>陌生環境：</span><div class="stars mini-stars" data-name="陌生環境"></div></div>
+            <div class="env-row"><span>寵物友善場所：</span><div class="stars mini-stars" data-name="寵物友善場所"></div></div>
+          </div>
+          <div class="dash"></div>
+          <div class="result-line">泛化能力總評：</div>
+          <div class="result-options">
+            <label><input type="checkbox">尚未泛化</label>
+            <label><input type="checkbox">輕度泛化</label>
+            <label><input type="checkbox">中度泛化</label>
+            <label><input type="checkbox">良好泛化</label>
+            <label><input type="checkbox">完全泛化</label>
+          </div>
+        </div>
+        <div class="small-dog">🏡🐕</div>
+      </article>
+
+      <article class="section orange section-proofing">
+        <div class="section-title">🐾【四、抗干擾能力（Proofing）】</div>
+        <div class="section-body">
+          <div class="gen-grid">
+            <div class="proof-row"><span>地上玩具：</span><div class="stars mini-stars" data-name="地上玩具"></div></div>
+            <div class="proof-row"><span>地上零食：</span><div class="stars mini-stars" data-name="地上零食"></div></div>
+            <div class="proof-row"><span>家人走動：</span><div class="stars mini-stars" data-name="家人走動"></div></div>
+            <div class="proof-row"><span>陌生人經過：</span><div class="stars mini-stars" data-name="陌生人經過"></div></div>
+            <div class="proof-row"><span>小孩奔跑：</span><div class="stars mini-stars" data-name="小孩奔跑"></div></div>
+            <div class="proof-row"><span>腳踏車經過：</span><div class="stars mini-stars" data-name="腳踏車經過"></div></div>
+            <div class="proof-row"><span>其他狗出現：</span><div class="stars mini-stars" data-name="其他狗出現"></div></div>
+            <div class="proof-row"><span>興奮狀態下：</span><div class="stars mini-stars" data-name="興奮狀態下"></div></div>
+            <div class="proof-row"><span>驚嚇恢復後：</span><div class="stars mini-stars" data-name="驚嚇恢復後"></div></div>
+          </div>
+        </div>
+        <div class="small-dog">🦴🐾</div>
+      </article>
+
+      <article class="section orange section-distance">
+        <div class="section-title">🐾【五、距離能力（Distance）】</div>
+        <div class="section-body">
+          <div class="score-list">
+            <div class="distance-row"><span>貼身：</span><div class="stars mini-stars" data-name="貼身"></div></div>
+            <div class="distance-row"><span>1 公尺：</span><div class="stars mini-stars" data-name="1 公尺"></div></div>
+            <div class="distance-row"><span>3 公尺：</span><div class="stars mini-stars" data-name="3 公尺"></div></div>
+            <div class="distance-row"><span>5 公尺：</span><div class="stars mini-stars" data-name="5 公尺"></div></div>
+            <div class="distance-row"><span>10 公尺以上：</span><div class="stars mini-stars" data-name="10 公尺以上"></div></div>
+          </div>
+        </div>
+        <div class="small-dog">🧎🏻🐶</div>
+      </article>
+
+      <article class="section green section-level">
+        <div class="section-title">🐾【六、最終評級（Level）】</div>
+        <div class="section-body">
+          <div class="level-box">
+            <div class="level-tag">Level 1</div><div class="level-text">｜剛建立指令</div>
+            <div class="level-tag l2">Level 2</div><div class="level-text">｜理解指令</div>
+            <div class="level-tag l3">Level 3</div><div class="level-text">｜已泛化</div>
+            <div class="level-tag l4">Level 4</div><div class="level-text">｜生活可靠</div>
+            <div class="level-tag l5">Level 5</div><div class="level-text">｜完全理解</div>
+          </div>
+          <div class="tip">提示：可直接勾選最符合本次評估的程度。</div>
+          <div class="result-options" style="margin-top:10px">
+            <label><input type="checkbox">Level 1</label><label><input type="checkbox">Level 2</label><label><input type="checkbox">Level 3</label><label><input type="checkbox">Level 4</label><label><input type="checkbox">Level 5</label>
+          </div>
+        </div>
+        <div class="small-dog">🎓🐶</div>
+      </article>
+    </section>
+
+    <section class="notes" aria-label="訓練備註">
+      <div class="notes-title">📝 訓練追蹤筆記</div>
+      <div class="note-rows">
+        <div class="note-row"><div class="note-icon">📝</div><div class="note-label">訓練紀錄：</div><textarea aria-label="訓練紀錄" placeholder="輸入本次訓練內容、成功率或需要加強的環節"></textarea></div>
+        <div class="note-row"><div class="note-icon">🏆</div><div class="note-label">讓你驚豔或最值得誇獎的瞬間：</div><textarea aria-label="值得誇獎的瞬間" placeholder="記下毛孩今天做得很棒的地方"></textarea></div>
+        <div class="note-row"><div class="note-icon">⚠️</div><div class="note-label">目前最大困難點：</div><textarea aria-label="目前最大困難點" placeholder="例如：看到其他狗容易分心、換環境成功率下降"></textarea></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="quote"><span style="font-size:28px">🐾</span><span>「先取得一個微小的成功！一步一腳印，回頭時發現已經走了這麼遠！」</span></div>
+      <div class="brand">夏克貝迪寵物沙龍<small>Sharkbedi Pet Salon</small></div>
+    </footer>
+  </main>
+
+  <div class="action-bar" aria-label="表單操作">
+    <button class="reset-btn" type="button" id="resetForm">清除本次評估</button>
+    <button class="pdf-btn" type="button" id="savePdf">存成 PDF</button>
+  </div>
+
+<script>
+  function buildStars(container) {
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'star';
+      btn.textContent = '☆';
+      btn.setAttribute('aria-label', `${container.dataset.name || '評分'} ${i} 星`);
+      btn.dataset.value = i;
+      btn.addEventListener('click', () => setStars(container, i));
+      container.appendChild(btn);
+    }
+  }
+
+  function setStars(container, value) {
+    container.dataset.value = value;
+    [...container.querySelectorAll('.star')].forEach((star, idx) => {
+      const on = idx < value;
+      star.classList.toggle('active', on);
+      star.textContent = on ? '★' : '☆';
+      star.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  document.querySelectorAll('.stars').forEach(buildStars);
+
+  document.querySelector('[data-today]').addEventListener('click', () => {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    const local = new Date(today.getTime() - offset * 60 * 1000);
+    document.getElementById('assessmentDate').value = local.toISOString().slice(0,10);
+  });
+
+  document.getElementById('resetForm').addEventListener('click', () => {
+    if (!confirm('確定要清除所有勾選、星級與輸入內容嗎？')) return;
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+    document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
+    document.querySelectorAll('.stars').forEach(el => setStars(el, 0));
+  });
+
+  document.getElementById('savePdf').addEventListener('click', () => {
+    // The browser print dialog provides the most reliable A4 PDF output,
+    // including all current form values and selected star ratings.
+    window.print();
+  });
+</script>
+</body>
+</html>
