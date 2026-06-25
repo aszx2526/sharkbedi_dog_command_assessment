@@ -228,6 +228,126 @@
     input,textarea{color:#4a3528 !important}
   }
 
+
+  /* 手機閱讀版：改為單欄、取消 A4 固定高度，避免雙欄內容被擠壓或溢出。 */
+  @media screen and (max-width:720px){
+    body{padding:0 0 88px;background:var(--paper)}
+    .sheet{
+      width:100%;
+      height:auto;
+      min-height:100vh;
+      margin:0;
+      padding:14px 10px 20px;
+      border-radius:0;
+      overflow:visible;
+      box-shadow:none;
+    }
+    .paw,.spark{display:none}
+    .hero{
+      height:auto;
+      grid-template-columns:52px minmax(0,1fr) 52px;
+      gap:3px;
+      margin:0 0 10px;
+    }
+    .character{height:68px;font-size:39px}
+    h1{font-size:23px;letter-spacing:.5px;line-height:1.18}
+    .ribbon{margin-top:6px;padding:6px 11px;font-size:11px;letter-spacing:.5px}
+    .meta{
+      height:auto;
+      grid-template-columns:1fr;
+      gap:9px;
+      margin:0 0 10px;
+      padding:12px;
+      border-radius:12px;
+    }
+    .field{gap:7px}
+    .field label{font-size:14px}
+    .field input{font-size:14px;padding:5px 2px}
+    .grid{
+      grid-template-columns:1fr !important;
+      grid-template-areas:none !important;
+      grid-template-rows:none !important;
+      gap:10px;
+    }
+    .section-stimulus,.section-criteria,.section-generalization,
+    .section-proofing,.section-distance,.section-level{grid-area:auto !important}
+    .section{
+      min-height:auto;
+      border-radius:12px;
+      background:linear-gradient(180deg,var(--tint,#f2f5e8) 0 46px,var(--card) 46px);
+    }
+    .section-title{height:46px;padding:0 12px;font-size:15px}
+    .section-body{padding:12px}
+    .small-dog{display:none}
+    .check-list,.score-list,.gen-grid,.level-box{padding-right:0}
+    .check-list{gap:10px}
+    .check-row{font-size:14px;line-height:1.35}
+    .check-row input{width:19px;height:19px}
+    .result-options{gap:8px 14px}
+    .result-options label{font-size:13px}
+    .score-list{gap:10px}
+    .score-row{grid-template-columns:105px 1fr;padding-bottom:8px}
+    .score-label{font-size:14px}
+    .star{font-size:24px}
+    .mini-stars .star{font-size:20px}
+    .gen-grid{grid-template-columns:1fr;gap:9px}
+    .env-row,.proof-row,.distance-row,
+    .section-proofing .proof-row,.section-distance .distance-row{
+      grid-template-columns:112px 1fr;
+      gap:7px;
+    }
+    .env-row span,.proof-row span,.distance-row span{font-size:14px}
+    .section-proofing .gen-grid{grid-template-columns:1fr;gap:9px;padding-right:0}
+    .section-generalization .result-options label,
+    .section-level .result-options label{font-size:12px}
+    .section-distance .score-list{padding-right:0;gap:8px}
+    .level-box{gap:8px 10px}
+    .level-tag{font-size:13px;padding:5px 9px}
+    .level-text{font-size:14px}
+    .tip{font-size:12px}
+    .notes{height:auto;margin-top:10px;border-radius:12px;background:linear-gradient(180deg,#fff5e9 0 46px,#fffdf8 46px)}
+    .notes-title{height:46px;font-size:16px;padding:0 12px}
+    .note-rows{padding:12px;gap:12px}
+    .note-row{grid-template-columns:25px 1fr;gap:6px}
+    .note-icon{font-size:18px}
+    .note-label{font-size:14px}
+    .note-row textarea{grid-column:2;height:60px;min-height:60px;max-height:140px;font-size:14px;padding:5px 3px}
+    .footer{height:auto;display:block;margin-top:12px}
+    .quote{font-size:12px;gap:6px}
+    .brand{text-align:left;margin:10px 0 0 32px;font-size:14px}
+    .action-bar{right:10px;bottom:10px;gap:7px}
+    .reset-btn,.pdf-btn{padding:11px 13px;font-size:13px}
+  }
+
+  /* 產生 PDF 時暫時強制套用 A4 桌面版，不受手機斷點影響。 */
+  .pdf-exporting .sheet{
+    width:210mm !important;height:297mm !important;min-height:297mm !important;
+    padding:8mm 8mm 7mm !important;border-radius:0 !important;overflow:hidden !important;
+    box-shadow:none !important;
+  }
+  .pdf-exporting .paw,.pdf-exporting .spark{display:block !important}
+  .pdf-exporting .hero{height:27mm !important;grid-template-columns:90px 1fr 90px !important;gap:8px !important;margin:0 0 3mm !important}
+  .pdf-exporting .character{height:27mm !important;font-size:58px !important}
+  .pdf-exporting h1{font-size:29px !important;letter-spacing:2px !important;line-height:1.12 !important}
+  .pdf-exporting .ribbon{margin-top:7px !important;padding:6px 20px !important;font-size:14px !important;letter-spacing:1.5px !important}
+  .pdf-exporting .meta{height:14mm !important;grid-template-columns:1.15fr 1fr 1fr !important;gap:10px !important;margin:0 0 3mm !important;padding:7px 12px !important}
+  .pdf-exporting .grid{grid-template-columns:1fr 1fr !important;grid-template-areas:"stimulus criteria" "generalization proofing" "distance level" !important;grid-template-rows:58mm 73mm 48mm !important;gap:3mm !important}
+  .pdf-exporting .section-stimulus{grid-area:stimulus !important}.pdf-exporting .section-criteria{grid-area:criteria !important}.pdf-exporting .section-generalization{grid-area:generalization !important}.pdf-exporting .section-proofing{grid-area:proofing !important}.pdf-exporting .section-distance{grid-area:distance !important}.pdf-exporting .section-level{grid-area:level !important}
+  .pdf-exporting .section{min-height:0 !important;background:linear-gradient(180deg,var(--tint,#f2f5e8) 0 40px,var(--card) 40px) !important}
+  .pdf-exporting .section-title{height:40px !important;padding:0 11px !important;font-size:16px !important}
+  .pdf-exporting .section-body{padding:10px 12px 9px !important}
+  .pdf-exporting .small-dog{display:block !important;right:14px !important;bottom:10px !important;font-size:46px !important}
+  .pdf-exporting .check-list{gap:6px !important;padding-right:62px !important}.pdf-exporting .check-row{gap:7px !important;font-size:12.6px !important;line-height:1.22 !important}.pdf-exporting .check-row input{width:16px !important;height:16px !important}
+  .pdf-exporting .result-options{gap:8px 13px !important}.pdf-exporting .result-options label{font-size:11.5px !important}
+  .pdf-exporting .score-list{gap:8px !important;padding-right:76px !important}.pdf-exporting .score-row{grid-template-columns:88px 1fr !important;gap:6px !important;padding-bottom:5px !important}.pdf-exporting .score-label{font-size:13px !important}.pdf-exporting .star{font-size:19px !important}.pdf-exporting .mini-stars .star{font-size:16px !important}
+  .pdf-exporting .gen-grid{grid-template-columns:1fr 1fr !important;gap:4px 11px !important;padding-right:68px !important}.pdf-exporting .env-row,.pdf-exporting .proof-row,.pdf-exporting .distance-row{grid-template-columns:80px 1fr !important;gap:4px !important}.pdf-exporting .env-row span,.pdf-exporting .proof-row span,.pdf-exporting .distance-row span{font-size:12.4px !important}
+  .pdf-exporting .section-proofing .gen-grid{grid-template-columns:1fr !important;gap:4px 0 !important;padding-right:67px !important}.pdf-exporting .section-proofing .proof-row{grid-template-columns:89px 1fr !important}
+  .pdf-exporting .section-distance .score-list{padding-right:70px !important;gap:5px !important}.pdf-exporting .section-distance .distance-row{grid-template-columns:78px 1fr !important}
+  .pdf-exporting .level-box{padding-right:83px !important;gap:5px 9px !important}.pdf-exporting .level-tag{font-size:11.5px !important;padding:3px 8px !important}.pdf-exporting .level-text{font-size:12px !important}.pdf-exporting .tip{font-size:10px !important}
+  .pdf-exporting .notes{height:36mm !important;margin-top:3mm !important;background:linear-gradient(180deg,#fff5e9 0 35px,#fffdf8 35px) !important}.pdf-exporting .notes-title{height:35px !important;font-size:15px !important}.pdf-exporting .note-rows{padding:8px 11px 8px !important;gap:5px !important}.pdf-exporting .note-row{grid-template-columns:23px 147px 1fr !important;gap:5px !important}.pdf-exporting .note-icon{font-size:17px !important}.pdf-exporting .note-label{font-size:11.5px !important}.pdf-exporting .note-row textarea{grid-column:auto !important;height:22px !important;min-height:22px !important;max-height:60px !important;font-size:11px !important;padding:2px 3px !important}
+  .pdf-exporting .footer{height:13mm !important;display:flex !important;margin-top:2mm !important;gap:10px !important;align-items:center !important}.pdf-exporting .quote{font-size:11.5px !important;gap:7px !important}.pdf-exporting .brand{text-align:right !important;margin:0 !important;font-size:13px !important}
+  .pdf-exporting .action-bar{display:none !important}
+
 </style>
 </head>
 <body>
@@ -384,6 +504,7 @@
     <button class="pdf-btn" type="button" id="savePdf">存成 PDF</button>
   </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
   function buildStars(container) {
     for (let i = 1; i <= 5; i++) {
@@ -424,10 +545,32 @@
     document.querySelectorAll('.stars').forEach(el => setStars(el, 0));
   });
 
-  document.getElementById('savePdf').addEventListener('click', () => {
-    // The browser print dialog provides the most reliable A4 PDF output,
-    // including all current form values and selected star ratings.
-    window.print();
+  document.getElementById('savePdf').addEventListener('click', async () => {
+    const sheet = document.querySelector('.sheet');
+    const commandName = (document.getElementById('commandName').value || '未命名').trim()
+      .replace(/[\\/:*?"<>|]/g, '_');
+    const filename = `狗狗指令能力評估表_${commandName}.pdf`;
+
+    // 與 PDFOK 版本相同：使用 html2pdf.js 直接輸出 PDF；載入失敗時才退回瀏覽器列印。
+    document.body.classList.add('pdf-exporting');
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    try {
+      if (!window.html2pdf) throw new Error('html2pdf.js 載入失敗');
+      await html2pdf().set({
+        margin: 0,
+        filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all'] }
+      }).from(sheet).save();
+    } catch (error) {
+      console.warn('PDF 產生失敗，將改用瀏覽器列印。', error);
+      window.print();
+    } finally {
+      document.body.classList.remove('pdf-exporting');
+    }
   });
 </script>
 </body>
