@@ -384,6 +384,26 @@
     min-height:60px;
     border-bottom:2px dashed #c4a98e;
   }
+
+  /* 修正手機長圖：備註文字固定使用第二欄的完整寬度，避免中文被壓成一字一行。 */
+  @media screen and (max-width:720px){
+    .snapshot-host .note-row{
+      grid-template-columns:25px minmax(0,1fr) !important;
+    }
+    .snapshot-host .note-row .snapshot-textarea{
+      grid-column:2 !important;
+      width:100% !important;
+      min-width:0 !important;
+      max-width:100% !important;
+      white-space:pre-wrap !important;
+      overflow-wrap:break-word !important;
+      word-break:normal !important;
+    }
+    .snapshot-host .note-row .note-label{
+      grid-column:2 !important;
+      min-width:0 !important;
+    }
+  }
   .snapshot-host .snapshot-checkbox{
     display:inline-grid;
     place-items:center;
