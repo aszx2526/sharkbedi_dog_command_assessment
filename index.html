@@ -348,6 +348,62 @@
   .pdf-exporting .footer{height:13mm !important;display:flex !important;margin-top:2mm !important;gap:10px !important;align-items:center !important}.pdf-exporting .quote{font-size:11.5px !important;gap:7px !important}.pdf-exporting .brand{text-align:right !important;margin:0 !important;font-size:13px !important}
   .pdf-exporting .action-bar{display:none !important}
 
+
+
+  /* 長圖截圖專用：在畫面外建立與目前手機版相同寬度的副本。 */
+  .snapshot-host{
+    position:fixed;
+    left:-100000px;
+    top:0;
+    z-index:-1;
+    width:100vw;
+    pointer-events:none;
+    background:var(--paper);
+  }
+  .snapshot-host .sheet{
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    margin:0 !important;
+    overflow:visible !important;
+    box-shadow:none !important;
+  }
+  .snapshot-host .snapshot-input,
+  .snapshot-host .snapshot-textarea{
+    display:block;
+    width:100%;
+    min-height:1.65em;
+    color:var(--ink);
+    border-bottom:2px solid #bda28c;
+    padding:5px 3px;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    line-height:1.4;
+  }
+  .snapshot-host .snapshot-textarea{
+    min-height:60px;
+    border-bottom:2px dashed #c4a98e;
+  }
+  .snapshot-host .snapshot-checkbox{
+    display:inline-grid;
+    place-items:center;
+    width:19px;
+    height:19px;
+    flex:0 0 19px;
+    border:2px solid #8a6b51;
+    border-radius:3px;
+    background:#fff;
+    color:#fff;
+    font-size:15px;
+    font-weight:900;
+    line-height:1;
+  }
+  .snapshot-host .snapshot-checkbox.checked{
+    border-color:var(--green);
+    background:var(--green);
+  }
+  .snapshot-host .stars .star{display:inline-block}
+
 </style>
 </head>
 <body>
@@ -501,10 +557,10 @@
 
   <div class="action-bar" aria-label="表單操作">
     <button class="reset-btn" type="button" id="resetForm">清除本次評估</button>
-    <button class="pdf-btn" type="button" id="savePdf">存成 PDF</button>
+    <button class="pdf-btn" type="button" id="saveImage">儲存長圖</button>
   </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
   function buildStars(container) {
     for (let i = 1; i <= 5; i++) {
@@ -545,33 +601,106 @@
     document.querySelectorAll('.stars').forEach(el => setStars(el, 0));
   });
 
-  document.getElementById('savePdf').addEventListener('click', async () => {
-    const sheet = document.querySelector('.sheet');
-    const commandName = (document.getElementById('commandName').value || '未命名').trim()
-      .replace(/[\\/:*?"<>|]/g, '_');
-    const filename = `狗狗指令能力評估表_${commandName}.pdf`;
+  function getSafeFileName() {
+    return (document.getElementById('commandName').value || '未命名').trim()
+      .replace(/[\\/:*?"<>|]/g, '_')
+      .slice(0, 60) || '未命名';
+  }
 
-    // 與 PDFOK 版本相同：使用 html2pdf.js 直接輸出 PDF；載入失敗時才退回瀏覽器列印。
-    document.body.classList.add('pdf-exporting');
-    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  function createSnapshotClone(source) {
+    const clone = source.cloneNode(true);
+
+    // 將表單控制項轉成一般文字／圖示，避免手機截圖時遺失輸入內容或勾選狀態。
+    const sourceFields = source.querySelectorAll('input, textarea');
+    const cloneFields = clone.querySelectorAll('input, textarea');
+
+    sourceFields.forEach((field, index) => {
+      const target = cloneFields[index];
+      if (!target) return;
+
+      if (field.matches('input[type="checkbox"]')) {
+        const badge = document.createElement('span');
+        badge.className = 'snapshot-checkbox' + (field.checked ? ' checked' : '');
+        badge.textContent = field.checked ? '✓' : '';
+        target.replaceWith(badge);
+        return;
+      }
+
+      const value = field.value || field.placeholder || '';
+      const staticField = document.createElement(field.tagName === 'TEXTAREA' ? 'div' : 'span');
+      staticField.className = field.tagName === 'TEXTAREA' ? 'snapshot-textarea' : 'snapshot-input';
+      staticField.textContent = value;
+      target.replaceWith(staticField);
+    });
+
+    clone.querySelectorAll('button').forEach(button => {
+      if (button.classList.contains('star')) {
+        const star = document.createElement('span');
+        star.className = button.className;
+        star.textContent = button.textContent;
+        button.replaceWith(star);
+      } else {
+        button.remove();
+      }
+    });
+
+    return clone;
+  }
+
+  async function saveLongImage() {
+    const sheet = document.querySelector('.sheet');
+    const button = document.getElementById('saveImage');
+
+    if (!window.html2canvas) {
+      alert('截圖工具載入失敗，請確認網路連線後再試一次。');
+      return;
+    }
+
+    button.disabled = true;
+    const originalText = button.textContent;
+    button.textContent = '正在製作…';
+
+    const clone = createSnapshotClone(sheet);
+    const captureHost = document.createElement('div');
+    captureHost.className = 'snapshot-host';
+    captureHost.appendChild(clone);
+    document.body.appendChild(captureHost);
 
     try {
-      if (!window.html2pdf) throw new Error('html2pdf.js 載入失敗');
-      await html2pdf().set({
-        margin: 0,
-        filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all'] }
-      }).from(sheet).save();
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+      const canvas = await html2canvas(clone, {
+        backgroundColor: '#fffdf7',
+        scale: Math.min(3, window.devicePixelRatio || 2),
+        useCORS: true,
+        logging: false,
+        windowWidth: clone.scrollWidth,
+        windowHeight: clone.scrollHeight,
+        width: clone.scrollWidth,
+        height: clone.scrollHeight,
+        scrollX: 0,
+        scrollY: 0
+      });
+
+      const filename = `狗狗指令能力評估表_${getSafeFileName()}.png`;
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     } catch (error) {
-      console.warn('PDF 產生失敗，將改用瀏覽器列印。', error);
-      window.print();
+      console.error('長圖製作失敗：', error);
+      alert('長圖製作失敗，請重新整理頁面後再試一次。');
     } finally {
-      document.body.classList.remove('pdf-exporting');
+      captureHost.remove();
+      button.disabled = false;
+      button.textContent = originalText;
     }
-  });
+  }
+
+  document.getElementById('saveImage').addEventListener('click', saveLongImage);
+
 </script>
 </body>
 </html>
